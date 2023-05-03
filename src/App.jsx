@@ -51,7 +51,7 @@ export const App = () => {
 
   const visibleProducts = useMemo(
     getVisibleProducts,
-    [products, selectedUser],
+    [products, selectedUser, inputName],
   );
 
   const handlerSortByUser = (name, id) => {
