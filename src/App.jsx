@@ -24,12 +24,30 @@ const products = productsFromServer.map((product) => {
 export const App = () => {
   const [selectedUser, setSelectedUser] = useState('All');
   const [activeUserId, setActiveUserId] = useState(null);
+  const [inputName, setInputName] = useState('');
 
-  const getVisibleProducts = () => (
-    selectedUser === 'All'
-      ? products
-      : products.filter(product => product.user.name === selectedUser)
-  );
+  const isNameMatchInputName = name => (
+    name
+      .toLowerCase()
+      .includes(inputName.toLowerCase().trim()));
+
+  const getVisibleProducts = () => {
+    let visibleProducts = products;
+
+    if (selectedUser !== 'All') {
+      visibleProducts = visibleProducts.filter(
+        product => product.user.name === selectedUser,
+      );
+    }
+
+    if (inputName !== '') {
+      visibleProducts = visibleProducts.filter(
+        product => isNameMatchInputName(product.user.name),
+      );
+    }
+
+    return visibleProducts;
+  };
 
   const visibleProducts = useMemo(
     getVisibleProducts,
@@ -44,6 +62,15 @@ export const App = () => {
   const handleSortByUserReset = () => {
     setSelectedUser('All');
     setActiveUserId(null);
+  };
+
+  const handleInputSortByName = (event) => {
+    setInputName(event.target.value);
+    setSelectedUser('All');
+  };
+
+  const hendleClearInput = () => {
+    setInputName('');
   };
 
   return (
@@ -84,7 +111,8 @@ export const App = () => {
                   type="text"
                   className="input"
                   placeholder="Search"
-                  value="qwe"
+                  value={inputName}
+                  onChange={handleInputSortByName}
                 />
 
                 <span className="icon is-left">
@@ -97,6 +125,7 @@ export const App = () => {
                     data-cy="ClearButton"
                     type="button"
                     className="delete"
+                    onClick={hendleClearInput}
                   />
                 </span>
               </p>
